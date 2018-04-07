@@ -31,28 +31,28 @@ if not exist %ITEMS_FILE% (
     goto end
 )
 
-:run_auction
-    :: Create paths
-    mkdir /q %TRANSACTIONS_PATH% >NUL 2>&1
+:: Delete old transactions and create new transaction directory
+rmdir /s /q "%TRANSACTIONS_PATH%" >NUL 2>&1
+mkdir "%TRANSACTIONS_PATH%" >NUL 2>&1
 
-    :: Run auction N times
-    for /l %%i in (1,1,%RUN_LIMIT%) do (
-       :: Run without commands file
-        echo Running auction for day %%i without input commands file
-        PING localhost -n %WAIT_TIME% >NUL
+:: Run auction N times
+for /l %%i in (1,1,%RUN_LIMIT%) do (
+    :: Run without commands file
+    echo Running auction for day %%i
+    PING localhost -n %WAIT_TIME% >NUL
 
-        call ".\\auction.bat" %ACCOUNTS_FILE% %ITEMS_FILE% %TRANSACTIONS_PATH%
-        if errorlevel 1 (
-            :: An error occurred while running the auction
-            echo An error occurred while running the auction
-            echo:
-            set RETURN_CODE=1
-            goto end
-        )     
-        
-        :: Clear screen
-        cls
-    )
+    call ".\\auction.bat" %ACCOUNTS_FILE% %ITEMS_FILE% %TRANSACTIONS_PATH%
+    if errorlevel 1 (
+        :: An error occurred while running the auction
+        echo An error occurred while running the auction
+        echo:
+        set RETURN_CODE=1
+        goto end
+    )     
+    
+    :: Clear screen
+    cls
+)
 
 :end
     :: Restore local variable evaluation
